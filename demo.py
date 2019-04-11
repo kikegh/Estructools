@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import ttk
 from tkinter import *
+from functools import partial
 import subprocess
 from subprocess import Popen
 from reportlab.pdfgen import canvas
@@ -12,7 +13,7 @@ class Estructools(tk.Tk):
         container.pack(side="top", fill="both", expand=True)
         container.grid_rowconfigure(0, weight=1)
         container.grid_columnconfigure(0,weight=1)
-        tk.Tk.wm_title(self,"Estructools")
+        tk.Tk.wm_title(self,"Estructool")
         self.frames = {}
 
         for F in (StartPage, VyBPage):
@@ -25,6 +26,12 @@ class Estructools(tk.Tk):
     def show_frame(self,cont):
         frame = self.frames[cont]
         frame.tkraise()
+
+    def other_input_control(self,text_selected = None,entry_element = None):
+        if(text_selected=="Otro"):
+            entry_element.config(state='enabled')
+        else:
+            entry_element.config(state='disabled')
 
     def show_table(self):
         subprocess.Popen(["poliestireno.jpg"],shell=True)
@@ -83,6 +90,7 @@ class VyBPage(tk.Frame):
         plaffon_label = ttk.Label(self,text="Falso plaffón")
         carga_label = ttk.Label(self,text="Carga viva")
         carga_adicional_label = ttk.Label(self,text="Carga adicional")
+
         #Data required labels positioning
         claro_label.grid(row=2, column=0, padx=10, pady=10, sticky='w')
         superior_label.grid(row=3, column=0, padx=10, pady=10, sticky='w')
@@ -106,18 +114,23 @@ class VyBPage(tk.Frame):
                         "Lozeta Interceramica",
                         "Otro",
                         "Ninguno"]
-        superior_value = tk.StringVar()
-        select_superior = ttk.OptionMenu(self,superior_value,superior_options[0],*superior_options)
-        select_superior.grid(row=3, column=1, padx=10,pady=10, sticky='w')
 
+        superior_entry = ttk.Entry(self,state='disabled')
+        superior_entry.grid(row=3,column=2, padx=10, pady=10, sticky='w')
+        select_superior = ttk.Combobox(self,values=superior_options)
+        select_superior.bind("<<ComboboxSelected>>",lambda event: controller.other_input_control(select_superior.get(),superior_entry))
+        select_superior.grid(row=3, column=1, padx=10,pady=10, sticky='w')
+        
         #acabado inferior select creation
         inferior_options=["Rich Empaste y Estuco de 2.5 cm",	
                         "Rich Empaste y Estuco de 3 cm",
                         "Rich Empaste y Estuco de 3.5 cm",
                         "Otro",
                         "Ninguno"]
-        inferior_value = tk.StringVar()
-        select_inferior = ttk.OptionMenu(self,inferior_value,inferior_options[0],*inferior_options)
+        inferior_entry = ttk.Entry(self,state='disabled')
+        inferior_entry.grid(row=4,column=2, padx=10, pady=10, sticky='w')
+        select_inferior = ttk.Combobox(self,values=inferior_options)
+        select_inferior.bind("<<ComboboxSelected>>",lambda event: controller.other_input_control(select_inferior.get(),inferior_entry))
         select_inferior.grid(row=4, column=1, padx=10,pady=10, sticky='w')
 
         #Falso plaffon select creation
@@ -126,8 +139,12 @@ class VyBPage(tk.Frame):
                         "Unicel",
                         "Otro",
                         "Ninguno"]
-        plaffon_value = tk.StringVar()
-        select_plaffon= ttk.OptionMenu(self,plaffon_value,plaffon_options[0],*plaffon_options)
+
+        plaffon_entry = ttk.Entry(self,state='disabled')
+        plaffon_entry.grid(row=5,column=2, padx=10, pady=10, sticky='w')
+        select_plaffon = ttk.Combobox(self,values=inferior_options)
+        select_plaffon.bind("<<ComboboxSelected>>",lambda event: controller.other_input_control(select_plaffon.get(),plaffon_entry))
+        
         select_plaffon.grid(row=5, column=1, padx=10,pady=10, sticky='w')
 
         #carga viva select creation
@@ -155,9 +172,12 @@ class VyBPage(tk.Frame):
                         "Salones de baile",	
                         "Restaurantes",
                         "Aulas y similares",
-                        "Otra carga"]
-        viva_value = tk.StringVar()
-        select_viva= ttk.OptionMenu(self,viva_value,viva_options[0],*viva_options)
+                        "Otro"]
+
+        viva_entry = ttk.Entry(self,state='disabled')
+        viva_entry.grid(row=6,column=2, padx=10, pady=10, sticky='w')
+        select_viva = ttk.Combobox(self,values=viva_options)
+        select_viva.bind("<<ComboboxSelected>>",lambda event: controller.other_input_control(select_viva.get(),viva_entry))
         select_viva.grid(row=6, column=1, padx=10,pady=10, sticky='w')
         claro_entry = ttk.Entry(self)
 
